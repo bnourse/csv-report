@@ -59,7 +59,7 @@ for accountName in accountsArray
     accountCategories = getCategories(csvFile)
     totalSpent = 0
     startingBalance = getStartingBalance(accountName,csvFile)
-    balanceRemaining = startingBalance
+    balanceRemaining = startingBalance * -1
 
     categoryList = []
     categorySpentList = []
@@ -97,10 +97,13 @@ for accountName in accountsArray
 
 	end
 
+	for categorySpent in categorySpentList
+		balanceRemaining = balanceRemaining - categorySpent
+	end
 
 	#console output stuff goes here
 	#remember to skip outputting a category if categoryCountList[i] == 0
-	puts accountName
+	print "Account: " + accountName + "... Balance: $" + balanceRemaining.round(2).to_s + "\n"
 	for i in 0..categoryList.length-1
 		#binding.pry
 		if categoryCountList[i] > 0 then
