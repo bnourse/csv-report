@@ -50,9 +50,19 @@ def getStartingBalance(name, inputCSV)
     return transactions[0]["Inflow"].gsub(/[$]/,'').gsub(/[,]/,'').to_f
 end
 
+args = ARGV
+	
 csvFile="accounts.csv"
 
-accountsArray = getAccounts(csvFile)
+if args.length > 0 
+	#if we are passed an account name in the command line
+	#only loop over the single account
+	accountsArray = [args[0]]
+else
+	#loop over all the accounts
+	accountsArray = getAccounts(csvFile)
+end
+
 for accountName in accountsArray 
     #For loop that will loop twice, once for each account name, in this case "Priya" and "Sonia".
     
@@ -121,3 +131,8 @@ for accountName in accountsArray
     print "\n" + "\n"
 
 end
+
+
+
+
+
