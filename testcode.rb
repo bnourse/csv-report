@@ -59,7 +59,7 @@ for accountName in accountsArray
     accountCategories = getCategories(csvFile)
     totalSpent = 0
     startingBalance = getStartingBalance(accountName,csvFile)
-    balanceRemaining = startingBalance * -1
+    balanceRemaining = startingBalance
 
     categoryList = []
     categorySpentList = []
@@ -69,7 +69,7 @@ for accountName in accountsArray
     for category in accountCategories
     	categoryTransactions = listTransactions(accountName, category, csvFile)
     	categoryTransactionCount = 0
-    	categorySpent = 0
+    	categoryBalance = 0
     	categoryList.push(category)
    
 	    for transaction in categoryTransactions
