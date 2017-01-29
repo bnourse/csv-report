@@ -1,6 +1,7 @@
 # Usage: ruby csv-hash.rb [options]
 #     -a, --account ACCOUNTNAME        Generate report for single account
 #     -f, --format FORMAT              Specify output format as console, html, or csv
+#     -h, --help                       Shows help info
 # Defaults to all accounts, console formatted
 
 require "csv"
@@ -188,7 +189,6 @@ class AccountsReport
   end
 
   def output_to_html
-    # puts "outputting html : #{@accounts.keys.to_s}"
     @accounts.each do |name, info|
       puts_html_header(name, info)
       puts_html_table_open
@@ -229,7 +229,23 @@ class AccountsReport
   end
 
   def output_to_csv
-    puts "outputting csv : #{@accounts.keys.to_s}"
+    check_for_account_in_cl_options
+    puts "Generating report for #{@cl_options[:account]} at ./report.csv"
+    open('report.csv', 'w') do |f|
+      f << "Category,Total Spent,Average Transaction\n"
+      @accounts.each do |name, info|
+        info.categories.each do |category, c_info|
+          f << "#{category},#{c_info.balance_to_s},#{c_info.avg_to_s}\n"
+        end
+      end
+    end
+  end
+
+  def check_for_account_in_cl_options
+    if @cl_options[:account] == nil
+      puts "CSV output requires an account name"
+      puts_help_info_and_terminate
+    end
   end
 
   def puts_help_info_and_terminate
