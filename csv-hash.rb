@@ -89,6 +89,17 @@ class AccountsReport
     end.parse!
   end
 
+  #short-circuit @accounts into a hash with a single account info element when there's a command
+  # line arg
+  # right now it's just returning the account info object instead of a one element hash
+  def process_cl_account_option
+    account_requested = @accounts[@cl_options[:account]]
+    binding.pry
+    if account_requested != nil
+      @accounts = { account_requested => account_requested
+    end
+  end
+
   def create_report
     load_cl_options
     CSV.foreach("accounts.csv", {headers: true, return_headers: false}) do |row|
@@ -124,7 +135,7 @@ class AccountsReport
       # Add transaction for that category.
       current_account.get_category(current_category).add_transaction(transaction_balance)
     end
-
+    process_cl_account_option
   end
 
   def output
