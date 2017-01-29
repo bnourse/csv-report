@@ -79,7 +79,7 @@ class AccountsReport
     @accounts = {}
   end
 
-  def createReport
+  def create_report
     CSV.foreach("accounts.csv", {headers: true, return_headers: false}) do |row|
       # Add a key for each account to the accounts Hash.
       account_name = row["Account"].chomp
@@ -113,8 +113,30 @@ class AccountsReport
       # Add transaction for that category.
       current_account.category(category).add_transaction(transaction_balance)
     end
+
   end
+
+  def output_to_console
+    @accounts.each do |name, info|
+      puts "\n"
+      puts "======================================================================"
+      puts "Account: #{name}... Balance: $#{info.pretty_account_balance}"
+      puts "======================================================================"
+      puts "Category                     | Total Spent | Average Transaction"
+      puts "---------------------------- | ----------- | -------------------------"
+      info.categories.each do |category, c_info|
+        print "#{category.ljust(28)} | $#{c_info.pretty_balance} | $#{c_info.pretty_avg_transaction}\n"
+      end
+      puts "\n"
+    end
+  end
+
 end
+
+ar = AccountsReport.new
+ar.set_up_initial_values
+ar.create_report
+ar.output_to_console
 
 # accounts = {}
 
