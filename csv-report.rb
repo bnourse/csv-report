@@ -1,109 +1,141 @@
 require 'csv'
 require 'pry'
 
-args = ARGV
-csvFile="accounts.csv"
+$args = ARGV
+$csvFile = "accounts.csv"
 
-totalSpent = 0
-startingBalance = getStartingBalance(accountName,csvFile)
-balanceRemaining = 0
-
-categoryList = []
-categoryBalanceList = []
-categoryCountList = []
-categoryAvgList = []
+$balanceRemaining = 0
 
 
-categoryTransactionCount = 0
-categoryBalance = 0
+$categoryBalanceList = []
+$categoryCountList = []
+$categoryAvgList = []
 
-def getAccounts(inputCSV)
-    accounts = []
-    CSV.foreach(inputCSV, {headers: true, return_headers: false}) do |row|
-        accounts.push(row["Account"].strip)
+$categoryTransactionCount = 0
+$categoryBalanceAmount = 0
+
+def userInput
+    if $args.length > 0
+        accountsRetrieved = [$args[0]]
+        
+    else 
+        accountsRetrieved = findUniqueAccountNames
+
     end
-    return accounts.uniq
+    return accountsRetrieved
 end
 
-def getCategories(inputCSV)
-    categories = []
-    CSV.foreach(inputCSV, {headers: true, return_headers: false}) do |row|
-        categories.push(row["Category"].strip)
+
+###IF USING THE ENTIRE FILE
+def findUniqueAccountNames
+    accountsUniqueRetrieved = []
+    CSV.foreach($csvFile, {headers: true, return_headers: false}) do |row|
+        accountsUniqueRetrieved.push(row["Account"].strip)
     end
-    return categories.uniq
+    
+    return accountsUniqueRetrieved.uniq
 end
 
-def listTransactions(name, category, inputCSV)
+def findUniqueCategoryNames
+    categoryUniqueRetrieved = []
+    CSV.foreach($csvFile, {headers: true, return_headers: false}) do |row|
+        categoryUniqueRetrieved.push(row["Category"].strip)
+    end
+    
+    return categoryUniqueRetrieved.uniq
+end
+
+def startProcessing
+    accountsRetrieved = userInput
+    #binding.pry
+    processEachAccountInAccountsList(accountsRetrieved)
+end
+
+startProcessing
+#$accountUniqueNamesList = accountsRetrieved
+
+$categoryUniqueNamesList = findUniqueCategoryNames
+
+def processEachAccountInAccountsList(accountsRetrieved)
+    for i in 0..accountsRetrieved.length-1
+        processThisAccount(accountsRetrieved[i])
+    end
+end
+
+def processThisAccount(accName)
+    $balanceRemaining = 0
+    
+    for x in 0..$categoryUniqueNamesList.length-1
+        processThisCategoryForThisAccount(accName, $categoryUniqueNamesList[i])
+    end 
+        
+    for i in 0..$categoryBalanceList.length-1
+        $balanceRemaining = $balanceRemaining + $categoryBalanceAmount
+    end
+    binding.pry
+    outputWhichFormat
+end
+
+def processThisCategoryForThisAccount(accName, category)
+    $categoryTransactionCount = 0
+    $categoryBalanceAmount = 0
+    processEachTransactionForThisCategory(accName, category)
+    $categoryBalanceList.push($categoryBalanceAmount.round(2))
+    $categoryCountList.push($categoryTransactionCount)
+    updateCategoryAvgList
+end
+
+def processEachTransactionForThisCategory(accName, category)
+    listOfTransactionsForThisCategory = getTransactionsArray(accName, category)
+    
+    for i in 0..listOfTransactionsForThisCategory.length-1
+        outflowFloat = makeStringIntoFloat(listOfTransactionsForThisCategory[i]["Outflow"])
+        inflowFloat = makeStringIntoFloat(listOfTransactionsForThisCategory[i]["Inflow"])
+        $categoryTransactionCount = $categoryTransactionCount + 1
+        $categoryBalanceAmount = $categoryBalanceAmount - outflowFloat + inflowFloat
+    end
+end
+
+def makeStringIntoFloat(column)
+    column.gsub(/[$]/,'').gsub(/[,]/,'').to_f
+end
+
+def getTransactionsArray(accName, category)
     transactions = []
-    CSV.foreach(inputCSV, {headers: true, return_headers: false}) do |row|
+    CSV.foreach($csvFile, {headers: true, return_headers: false}) do |row|
         strippedName = row["Account"].strip
         row["Account"] = strippedName
         strippedCategory = row["Category"].strip
         row["Category"] = strippedCategory
-        if strippedName == name then
-            if strippedCategory == category then
-                transactions.push(row)
-            end
+        if ifRelevantTransaction(accName, strippedName, category, strippedCategory) then
+            transactions.push(row)
         end
     end
     return transactions
 end
 
+def ifRelevantTransaction(wantName, actualName, wantCategory, actualCategory)
+    return actualName == wantName && actualCategory == wantCategory
+end
 
-def getStartingBalance(name, inputCSV)
-    transactions = []
-    CSV.foreach(inputCSV, {headers: true, return_headers: false}) do |row|
-        strippedName = row["Account"].strip
-        row["Account"] = strippedName
-        strippedPayee = row["Payee"].strip
-        row["Payee"] = strippedPayee
-        if strippedName == name then
-            if strippedPayee == "STARTING BALANCE" then
-                transactions.push(row)
-            end
-        end
+def updateCategoryAvgList
+    categoryAvg = 0
+    if $categoryTransactionCount > 0
+        categoryAvg = $categoryBalanceAmount / $categoryTransactionCount
+        categoryAvg = categoryAvg.round(2)
+    else
+        categoryAvg = 0
     end
-    return transactions[0]["Inflow"].gsub(/[$]/,'').gsub(/[,]/,'').to_f
+    $categoryAvgList.push(categoryAvg)
 end
 
-def convertToFloat(transaction)
-    transaction.gsub(/[$]/,'').gsub(/[,]/,'').to_f
+processThisCategoryForThisAccount("Sonia", "Entertainment")
+
+def outputWhichFormat
+    consoleHeader()
+    consoleBody
 end
 
-def processTransactions(categoryTransactions, categoryBalance, categoryTransactionCount,  categoryBalanceList)
-    for transaction in categoryTransactions
-        #Loops for each transaction for Priya and Sonia. Stripping the "$" and "," then converting to integer.
-        transactionOutflow = convertToFloat(transaction[4])
-        transactionInflow = convertToFloat(transaction[5])
-
-        transactionCountUpdate(categoryTransactionCount)
-        balanceUpdate(transactionInflow, transactionOutflow, categoryBalance)
-    end
-end
-
-def transactionCountUpdate(categoryTransactionCount)
-    categoryTransactionCount = categoryTransactionCount + 1
-    categoryCountList.push(categoryTransactionCount)
-end
-
-def balanceUpdate(transactionInflow, transactionOutflow, categoryBalance)
-    categoryBalance = categoryBalance  - transactionOutflow + transactionInflow
-    categoryBalanceList.push(categoryBalance.round(2))
-end
-
-
-
-if args.length > 0 
-    #if we are passed an account name in the command line
-    #only loop over the single account
-    accountsArray = [args[0]]
-else
-    #loop over all the accounts
-    accountsArray = getAccounts(csvFile)
-end
-
-    #console output stuff goes here
-    #remember to skip outputting a category if categoryCountList[i] == 0
 def consoleHeader(accountName, balanceRemaining)
     print ("=" * 80) + "\n"
     print "Account: " + accountName + "... Balance: $" + balanceRemaining.round(2).to_s + "\n"
@@ -127,34 +159,35 @@ def consoleOutput(accountName, balanceRemaining)
     consoleBody(categoryList, categoryCountList, categoryBalanceList, categoryAvgList)
 end
 
+# def updateBalance
+#   update total balance for this account, in this category
+#   totalBalance
+# end
 
-for accountName in accountsArray 
-    #For loop that will loop twice, once for each account name, in this case "Priya" and "Sonia".
-    accountCategories = getCategories(csvFile)
+# def totalBalanceForCategory
+#   update overall balance of $ spent
+# end
 
-    for category in accountCategories
-        categoryTransactions = listTransactions(accountName, category, csvFile)
-        categoryList.push(category)
-   ###################################
-        
-        #Calling the for loop that processes each transaction for a category.
-        processTransactions(categoryTransactions, categoryBalance, categoryTransactionCount,  categoryBalanceList)
-        binding.pry
+# def ignoreZeroCategories
+#   if category has 0 transactions for that account
+#       ignore category, set average to 0 (cannot divide by 0)
+#   else
+#       add category to total for that account
+#   end
+# end
 
-        if categoryTransactionCount > 0 
-            categoryAvg = categoryBalance / categoryTransactionCount
-        else
-            categoryAvg = 0
-        end
+# def totalBalance
+#   add up total amount spent and find ending balance
+# end
 
-        categoryAvgList.push(categoryAvg)
+# def outputConsoleFormat
+#   Console Format
+# end
 
+# def outputHTML
+#   HTML
+# end
 
-    end
-
-    for categoryBalance in categoryBalanceList
-        balanceRemaining = balanceRemaining + categoryBalance
-    end
-    consoleOutput(accountName, balanceRemaining, categoryList, categoryCountList, categoryBalanceList, categoryAvgList)
-end    
-
+# def outputCSV
+#   CSV format
+# end

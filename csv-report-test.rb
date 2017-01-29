@@ -33,26 +33,9 @@ def listTransactions(name, category, inputCSV)
     return transactions
 end
 
-
-def getStartingBalance(name, inputCSV)
-    transactions = []
-    CSV.foreach(inputCSV, {headers: true, return_headers: false}) do |row|
-        strippedName = row["Account"].strip
-        row["Account"] = strippedName
-        strippedPayee = row["Payee"].strip
-        row["Payee"] = strippedPayee
-        if strippedName == name then
-            if strippedPayee == "STARTING BALANCE" then
-                transactions.push(row)
-            end
-        end
-    end
-    return transactions[0]["Inflow"].gsub(/[$]/,'').gsub(/[,]/,'').to_f
-end
-
 args = ARGV
     
-csvFile="accounts.csv"
+csvFile = "accounts.csv"
 
 if args.length > 0 
     #if we are passed an account name in the command line
@@ -66,21 +49,17 @@ end
 for accountName in accountsArray 
     #For loop that will loop twice, once for each account name, in this case "Priya" and "Sonia".
     
-    accountCategories = getCategories(csvFile)
-    totalSpent = 0
-    startingBalance = getStartingBalance(accountName,csvFile)
+    categoryList = getCategories(csvFile)
     balanceRemaining = 0
 
-    categoryList = []
     categoryBalanceList = []
     categoryCountList = []
     categoryAvgList = []
 
-    for category in accountCategories
+    for category in categoryList
         categoryTransactions = listTransactions(accountName, category, csvFile)
         categoryTransactionCount = 0
         categoryBalance = 0
-        categoryList.push(category)
    
         for transaction in categoryTransactions
             #Loops for each transaction for Priya and Sonia. Stripping the "$" and "," then converting to integer.
