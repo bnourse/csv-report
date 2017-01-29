@@ -59,6 +59,14 @@ class Category
   def pretty_avg_transaction
     @average_transaction_balance.round(2).to_s.ljust(20)
   end
+
+  def balance_to_s
+    @category_balance.round(2).to_s
+  end
+
+  def avg_to_s
+    @average_transaction_balance.round(2).to_s
+  end
 end
 
 class Outflow
@@ -187,7 +195,7 @@ class AccountsReport
       info.categories.each do |category, c_info|
         puts_html_table_row(category, c_info)
       end
-      puts "</table>"
+      puts_html_table_close
     end
   end
 
@@ -209,9 +217,15 @@ class AccountsReport
   def puts_html_table_row(category, c_info)
     puts "\t<tr>"
     puts "\t\t<th>#{category}/th>"
-    puts "\t\t<th>$#{c_info.pretty_balance}</th>"
-    puts "\t\t<th>$#{c_info.pretty_avg_transaction}</th>"
+    puts "\t\t<th>$#{c_info.balance_to_s}</th>"
+    puts "\t\t<th>$#{c_info.avg_to_s}</th>"
     puts "\t</tr>"
+    puts
+  end
+
+  def puts_html_table_close
+    puts "</table>"
+    puts
   end
 
   def output_to_csv
