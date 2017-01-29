@@ -148,9 +148,7 @@ class AccountsReport
 
   def output
     case @cl_options[:format]
-    when nil
-      output_to_console
-    when "console"
+    when nil, "console"
       output_to_console
     when "html"
       output_to_html
