@@ -1,3 +1,8 @@
+# Usage: ruby csv-hash.rb [options]
+#     -a, --account ACCOUNTNAME        Generate report for single account
+#     -f, --format FORMAT              Specify output format as console, html, or csv
+# Defaults to all accounts, console formatted
+
 require "csv"
 require "pry"
 require "optparse"
@@ -89,8 +94,6 @@ class AccountsReport
     end.parse!
   end
 
-  #short-circuit @accounts into a hash with a single account info element when there's a command
-  #line arg
   def process_cl_account_option
     account_name_requested = @cl_options[:account]
     account_requested = @accounts[account_name_requested]  
@@ -129,7 +132,6 @@ class AccountsReport
       
       transaction_balance = inflow.to_f - outflow.to_f
 
-      # Keep a tally for current balance of the account.
       current_account.update_balance(transaction_balance)
 
       current_category = row["Category"].chomp
@@ -139,7 +141,6 @@ class AccountsReport
         current_account.add_category(current_category)
       end
 
-      # Add transaction for that category.
       current_account.get_category(current_category).add_transaction(transaction_balance)
     end
     process_cl_account_option
@@ -182,11 +183,11 @@ class AccountsReport
   end
 
   def output_to_html
-    puts "outputting html"
+    puts "outputting html : #{@accounts.keys.to_s}"
   end
 
   def output_to_csv
-    puts "outputting csv"
+    puts "outputting csv : #{@accounts.keys.to_s}"
   end
 
   def puts_help_info_and_terminate
@@ -200,54 +201,3 @@ ar = AccountsReport.new
 ar.set_up_initial_values
 ar.create_report
 ar.output
-
-# accounts = {}
-
-# CSV.foreach("accounts.csv", {headers: true, return_headers: false}) do |row|
-#   # Add a key for each account to the accounts Hash.
-#   account = row["Account"].chomp
-
-#   if !accounts[account]
-#     accounts[account] = AccountInfo.new
-#     accounts[account].set_up_initial_values
-#   end
-
-#   # Set the account which is being affected by this iteration.
-#   current_account = accounts[account]
-
-#   # Clean up outflow and inflow.
-#   outflow = Outflow.new
-#   outflow.set_value(row["Outflow"])
-#   inflow = Inflow.new
-#   inflow.set_value(row["Inflow"])
-  
-#   transaction_balance = inflow.to_f - outflow.to_f
-
-#   # Keep a tally for current balance of the account.
-#   current_account.update_balance(transaction_balance)
-
-#   category = row["Category"].chomp
-
-#   # Initialize category.
-#   if !current_account.already_has_category(category)
-#     current_account.add_category(category)
-#   end
-
-#   # Add transaction for that category.
-#   current_account.category(category).add_transaction(transaction_balance)
-# end
-
-# #  Display
-
-# accounts.each do |name, info|
-#   puts "\n"
-#   puts "======================================================================"
-#   puts "Account: #{name}... Balance: $#{info.pretty_account_balance}"
-#   puts "======================================================================"
-#   puts "Category                     | Total Spent | Average Transaction"
-#   puts "---------------------------- | ----------- | -------------------------"
-#   info.categories.each do |category, c_info|
-#     print "#{category.ljust(28)} | $#{c_info.pretty_balance} | $#{c_info.pretty_avg_transaction}\n"
-#   end
-#   puts "\n"
-# end
