@@ -1,4 +1,5 @@
 require "csv"
+require "pry"
 
 class AccountInfo
   def set_up_initial_values
@@ -117,6 +118,22 @@ class AccountsReport
 
   end
 
+  def output
+    binding.pry
+    case @format
+    when "console"
+      output_to_console
+    when "html"
+      output_to_html
+    when "csv"
+      output_to_csv
+    else
+      puts "Invalid format argument!"
+      puts "Valid formats are: console, csv, html"
+      puts_usage_information_and_terminate
+    end 
+  end
+
   def output_to_console
     @accounts.each do |name, info|
       puts_console_header(name, info)
@@ -137,7 +154,16 @@ class AccountsReport
   end
 
   def output_to_html
+    puts "outputting html"
+  end
 
+  def output_to_csv
+    puts "outputting csv"
+  end
+
+  def puts_usage_information_and_terminate
+    puts "For help, run: ruby csv-hash.rb -h"
+    exit
   end
 
 end
@@ -145,7 +171,7 @@ end
 ar = AccountsReport.new
 ar.set_up_initial_values
 ar.create_report
-ar.output_to_console
+ar.output
 
 # accounts = {}
 
