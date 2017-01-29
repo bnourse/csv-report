@@ -77,6 +77,7 @@ end
 class AccountsReport
   def set_up_initial_values
     @accounts = {}
+    @format = "console"
   end
 
   def create_report
@@ -118,17 +119,25 @@ class AccountsReport
 
   def output_to_console
     @accounts.each do |name, info|
-      puts "\n"
-      puts "======================================================================"
-      puts "Account: #{name}... Balance: $#{info.pretty_account_balance}"
-      puts "======================================================================"
-      puts "Category                     | Total Spent | Average Transaction"
-      puts "---------------------------- | ----------- | -------------------------"
+      puts_console_header(name, info)
       info.categories.each do |category, c_info|
         print "#{category.ljust(28)} | $#{c_info.pretty_balance} | $#{c_info.pretty_avg_transaction}\n"
       end
       puts "\n"
     end
+  end
+
+  def puts_console_header(name, info)
+    puts "\n"
+    puts "======================================================================"
+    puts "Account: #{name}... Balance: $#{info.pretty_account_balance}"
+    puts "======================================================================"
+    puts "Category                     | Total Spent | Average Transaction"
+    puts "---------------------------- | ----------- | -------------------------"
+  end
+
+  def output_to_html
+
   end
 
 end
