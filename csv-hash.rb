@@ -23,7 +23,7 @@ class AccountInfo
     return (@categories[category_name] != nil)
   end
 
-  def category(category_name)
+  def get_category(category_name)
     return @categories[category_name]
   end
 
@@ -103,15 +103,15 @@ class AccountsReport
       # Keep a tally for current balance of the account.
       current_account.update_balance(transaction_balance)
 
-      category = row["Category"].chomp
+      current_category = row["Category"].chomp
 
       # Initialize category.
-      if !current_account.already_has_category(category)
-        current_account.add_category(category)
+      if !current_account.already_has_category(current_category)
+        current_account.add_category(current_category)
       end
 
       # Add transaction for that category.
-      current_account.category(category).add_transaction(transaction_balance)
+      current_account.get_category(current_category).add_transaction(transaction_balance)
     end
 
   end
