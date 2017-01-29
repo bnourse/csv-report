@@ -1,5 +1,6 @@
 require "csv"
 require "pry"
+require "optparse"
 
 class AccountInfo
   def set_up_initial_values
@@ -78,10 +79,18 @@ end
 class AccountsReport
   def set_up_initial_values
     @accounts = {}
-    @format = "console"
+    @cl_options = {} 
+  end
+
+  def load_cl_options
+    OptionParser.new do |opt|
+      opt.on('-a', '--account ACCOUNTNAME', 'Generate report for single account') { |o| @cl_options[:account] = o }
+      opt.on('-f', '--format FORMAT', 'Specify output format as console, html, or csv') { |o| @cl_options[:format] = o }
+    end.parse!
   end
 
   def create_report
+    load_cl_options
     CSV.foreach("accounts.csv", {headers: true, return_headers: false}) do |row|
       # Add a key for each account to the accounts Hash.
       account_name = row["Account"].chomp
@@ -119,8 +128,9 @@ class AccountsReport
   end
 
   def output
-    binding.pry
-    case @format
+    case @cl_options[:format]
+    when nil
+      output_to_console
     when "console"
       output_to_console
     when "html"
@@ -130,7 +140,7 @@ class AccountsReport
     else
       puts "Invalid format argument!"
       puts "Valid formats are: console, csv, html"
-      puts_usage_information_and_terminate
+      puts_help_info_and_terminate
     end 
   end
 
@@ -161,7 +171,7 @@ class AccountsReport
     puts "outputting csv"
   end
 
-  def puts_usage_information_and_terminate
+  def puts_help_info_and_terminate
     puts "For help, run: ruby csv-hash.rb -h"
     exit
   end
