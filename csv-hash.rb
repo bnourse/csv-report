@@ -90,14 +90,21 @@ class AccountsReport
   end
 
   #short-circuit @accounts into a hash with a single account info element when there's a command
-  # line arg
-  # right now it's just returning the account info object instead of a one element hash
+  #line arg
   def process_cl_account_option
-    account_requested = @accounts[@cl_options[:account]]
-    binding.pry
-    if account_requested != nil
-      @accounts = { account_requested => account_requested
+    account_name_requested = @cl_options[:account]
+    account_requested = @accounts[account_name_requested]  
+    if account_name_requested != nil && account_requested != nil
+      # user provided an account name that is in data chop @accounts to just that acct
+      @accounts = {account_name_requested => account_requested}
     end
+    if account_name_requested != nil && account_requested == nil
+      # user provided an account name, but that name isn't in data
+      puts "Account name doesn't exist in our file"
+      puts "Valid account names are: #{@accounts.keys.to_s}"
+      puts_help_info_and_terminate
+    end #no cl argument, leave @accounts as full list
+    binding.pry
   end
 
   def create_report
