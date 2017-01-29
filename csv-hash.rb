@@ -107,7 +107,6 @@ class AccountsReport
       puts "Valid account names are: #{@accounts.keys.to_s}"
       puts_help_info_and_terminate
     end #no cl argument, leave @accounts as full list
-    binding.pry
   end
 
   def create_report
@@ -181,7 +180,38 @@ class AccountsReport
   end
 
   def output_to_html
-    puts "outputting html : #{@accounts.keys.to_s}"
+    # puts "outputting html : #{@accounts.keys.to_s}"
+    @accounts.each do |name, info|
+      puts_html_header(name, info)
+      puts_html_table_open
+      info.categories.each do |category, c_info|
+        puts_html_table_row(category, c_info)
+      end
+      puts "</table>"
+    end
+  end
+
+  def puts_html_header(name, info)
+    puts "<h1>#{name}</h1>"
+    puts "<p>Total Balance: $#{info.pretty_account_balance}</p>"
+    puts "<hr>"
+  end
+
+  def puts_html_table_open
+    puts "<table>"
+    puts "\t<tr>"
+    puts "\t\t<th>Category</th>"
+    puts "\t\t<th>Total Spent</th>"
+    puts "\t\t<th>Avg. Transaction</th>"
+    puts "\t</tr>"
+  end
+
+  def puts_html_table_row(category, c_info)
+    puts "\t<tr>"
+    puts "\t\t<th>#{category}/th>"
+    puts "\t\t<th>$#{c_info.pretty_balance}</th>"
+    puts "\t\t<th>$#{c_info.pretty_avg_transaction}</th>"
+    puts "\t</tr>"
   end
 
   def output_to_csv
