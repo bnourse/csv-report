@@ -1,0 +1,9 @@
+Account,Date,Payee,Category,Outflow,Inflow
+Alice,1/1/2017,STARTING BALANCE,Allowance,$0.00,"$5,000.00"
+Bob,1/1/2017,STARTING BALANCE,Allowance,$0.00,"$3,800.00"
+Alice,1/9/2017,ACME AUTO REPAIR,Car Repairs,$4.91,$0.00
+Alice,1/4/2017,ACME LANDLORD,Rent,$800.43,$0.00
+Alice,1/16/2017,ALAMO DRAFTHOUSE,Entertainment,$27.62,$0.00
+Alice,1/10/2017,APPLEBEE'S,Entertainment,$100.00,$0.00
+"Bob
+",1/10/2017,BIG LOTS,Household Goods,$29.43,$0.00
