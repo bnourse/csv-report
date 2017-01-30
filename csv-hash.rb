@@ -18,6 +18,10 @@ class AccountInfo
     @account_balance += amount
   end
 
+  def set_balance(amount)
+    @account_balance = amount
+  end
+
   def add_category(category_name)
     @categories[category_name] = Category.new
     @categories[category_name].set_up_initial_values
@@ -38,6 +42,10 @@ class AccountInfo
   def categories
     return @categories
   end
+
+  def balance
+    return @account_balance
+  end
 end
 
 class Category
@@ -48,9 +56,17 @@ class Category
   end
 
   def add_transaction(amount)
-    @category_balance += amount
+    update_balance(amount)
     @num_transactions += 1
+    update_transaction_balance
+  end
+
+  def update_transaction_balance
     @average_transaction_balance = @category_balance / @num_transactions
+  end
+
+  def update_balance(amount)
+    @category_balance += amount
   end
 
   def pretty_balance
@@ -68,6 +84,15 @@ class Category
   def avg_to_s
     @average_transaction_balance.round(2).to_s
   end
+
+  def set_balance(amount)
+    @category_balance = amount
+  end
+
+  def balance
+    @category_balance
+  end
+
 end
 
 class Outflow
@@ -255,7 +280,66 @@ class AccountsReport
 
 end
 
+
+
+def test_equality(expected, actual)
+  if expected == actual
+    puts "Pass"
+  else
+    puts "Fail. Expected #{expected}, but got #{actual}."
+  end
+end
+
+def test_account_balance_update(test_starting_balance, test_trans_amount)
+  ai = AccountInfo.new
+  ai.set_balance(test_starting_balance)
+  test_balance = test_starting_balance + test_trans_amount
+
+  test_equality(test_balance, ai.update_balance(test_trans_amount))
+end
+
+def test_category_balance_update(test_starting_balance, test_trans_amount)
+  c = Category.new
+  c.set_balance(test_starting_balance)
+  test_balance = test_starting_balance + test_trans_amount
+
+  test_equality(test_balance, test_trans_amount)
+end
+
+def test_category_list
+  ai = AccountInfo.new
+  
+end
+
+test_account_balance_update(0, 20)
+test_category_balance_update(0, 100)
+
 ar = AccountsReport.new
 ar.set_up_initial_values
 ar.create_report
-ar.output
+
+# class Tests
+
+#   def test_equality(expected, actual)
+#     if expected == actual
+#       puts "Pass"
+#     else
+#       puts "Fail. Expected #{expected}, but got #{actual}."
+#     end
+#   end
+
+#   def set_up_initial_values
+#     @ar = AccountsReport.new
+#     @ar.set_up_initial_values
+#     @ar.create_report
+#     #ar.output
+#   end
+
+# end
+
+# t = Tests.new
+# t.set_initial_values
+# t.test_equality(1, 2)
+
+
+
