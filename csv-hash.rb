@@ -233,6 +233,16 @@ class AccountsReport
     end
   end
 
+  def trim_to_one_account(account_name_requested)
+    account_requested = @accounts[account_name_requested]
+    account = {account_name_requested => account_requested}
+    return account
+  end
+
+  def accounts
+    @accounts
+  end
+
   def puts_html_header(name, info)
     puts "<h1>#{name}</h1>"
     puts "<p>Total Balance: $#{info.pretty_account_balance}</p>"
