@@ -5,18 +5,10 @@ ar = AccountsReport.new
 ar.set_up_initial_values
 ar.create_report
 
-get("/Priya") do
-	@account_list = ar.trim_to_one_account("Priya")
-	erb :report
-end
-
-get("/Sonia") do
-	@account_list = ar.trim_to_one_account("Sonia")
-	erb :report
-end
-
 get("/report") do
-	@account_list = ar.accounts
+	selection = params["name"]
+	if selection == nil then @account_list = ar.accounts
+	else @account_list = ar.trim_to_one_account(selection) end
 	erb :report
 end
 

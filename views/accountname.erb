@@ -11,11 +11,10 @@
 		<th>Avg. Transaction</th>
 	</tr>
 	<% @account.categories.each do |category, c_info| %>
-	<tr>
-		<td><%= category %></td>
-		<td>$<%= c_info.balance_to_s %></td>
-		<td>$<%= c_info.avg_to_s %></td>
-	</tr>
+		<tr>
+			<td><%= category %></td>
+			<td>$<%= c_info.balance_to_s %></td>
+			<td>$<%= c_info.avg_to_s %></td>
+		</tr>
 	<% end %>
 </table>
-
