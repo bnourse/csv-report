@@ -37,3 +37,7 @@ end
 test_account_balance_update(0, 20)
 test_category_balance_update(0, 100)
 test_category_list
+
+ar = AccountsReport.new
+ar.set_up_initial_values
+ar.valid_login("test","pass")

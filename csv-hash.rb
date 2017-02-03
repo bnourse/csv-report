@@ -148,6 +148,25 @@ class AccountsReport
     end #no cl argument, leave @accounts as full list
   end
 
+  def valid_login(uname,pword)
+    is_valid = false
+    logins_hash = get_logins_hash
+    if logins_hash.key? uname
+      if logins_hash[uname] == pword
+        is_valid = true
+      end
+    end
+    return is_valid
+  end
+
+  def get_logins_hash
+    logins_hash = {}
+    CSV.foreach("./logins.csv", {headers: true, return_headers: false}) do |row|
+      logins_hash[row["username"]] = row["password"]
+    end
+    return logins_hash
+  end
+
   def create_report
     load_cl_options
     CSV.foreach(@input_filename, {headers: true, return_headers: false}) do |row|
@@ -186,6 +205,23 @@ class AccountsReport
 
   def get_categories_for_account(account_name)
     return @accounts[account_name].categories
+  end
+
+  def add_row_to_file(row_hash)
+    csv_line = make_csv_line(row_hash)
+    append_to_csv_file(csv_line)
+    set_up_initial_values
+    create_report
+  end
+
+  def make_csv_line(row_hash)
+    output = "#{row_hash["account"]},#{row_hash["date"]},#{row_hash["payee"]},#{row_hash["category"]},#{row_hash["outflow"]},#{row_hash["inflow"]}\n"
+  end
+
+  def append_to_csv_file(csv_line)
+    open(@input_filename, 'a') do |f|
+      f.puts csv_line
+    end
   end
 
   def output
