@@ -25,6 +25,7 @@ end
 
 get("/admin") do
 	if session[:loggedin] == true
+		@account_names = ar.accounts.keys
 		erb :admin
 	else
 		redirect "/login"

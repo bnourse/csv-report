@@ -1,11 +1,11 @@
 <% @account_list.each do |name, account| %>
 
 
-	<h1><%= name %></h1>
-	<p>Total Balance: $<%= account.pretty_account_balance %></p>
+	<h2><%= name %></h2>
 	<hr>
+	<p>Total Balance: <strong>$<%= account.pretty_account_balance %></strong></p>
 
-	<table>
+	<table class="report-table">
 		<thead>
 			<tr>
 				<th>Category</th>

@@ -1,7 +1,8 @@
 <form action="/add_row" method="post">
 	<select name = "account">
-		<option value = "Sonia">Sonia</option>
-		<option value = "Priya">Priya</option>
+		<% for name in @account_names %>
+			<option value = "<%= name %>"><%= name %></option>
+		<% end %>
 	</select>
 
 	<label>Category</label>
