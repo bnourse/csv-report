@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en-us">
+	<head>
+	    <meta charset="utf-8">
+	    <title>CSV Report</title>
+	    <link href="<%= url('/styles.css') %>" rel="stylesheet" type="text/css" />
+	</head>
+
+	<body>
+		<div class = "nav_area">
+			<ul class = "nav_list">
+				<li><a href="/">Home</a></li>
+				<li><a href="/report">Full Report</a></li>
+				<li class = "dropdown"> 
+					<a href="javascript:void(0)" class="dropbtn">Individual Reports</a>
+					<div class="dropdown-content">
+				    	<a href="/report?name=Priya">Priya's report.</a>
+						<a href="/report?name=Sonia">Sonia's report.</a>
+					</div>
+				</li>
+				<li class="right"><a href="/logout">Log Out</a></li>
+			</ul>
+		</div>
+
+		<div class = "header">
+			<h1>Web CSV Report</h1>
+			<p class = "full-circle">,</p>
+		</div>
+
+		<div class = "content">
+			<%= yield %>
+		</div>
+
+	</body>
+</html>
