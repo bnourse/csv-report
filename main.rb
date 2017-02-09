@@ -1,6 +1,4 @@
-require_relative "csv-hash.rb"
+require_relative "functions-cli.rb"
 
-ar = AccountsReport.new
-ar.set_up_initial_values
-ar.create_report
-ar.output_account_to_html("Sonia")
+runner = CLIRunner.new
+runner.run
