@@ -1,9 +1,13 @@
+<h2>Add a Transaction</h2>
+
 <form action="/add_row" method="post">
-	<select name = "account">
+	<label>Account</label>
+	<input list="accounts" name="account">
+	<datalist id = "accounts">
 		<% for name in @account_names %>
-			<option value = "<%= name %>"><%= name %></option>
+			<option value = "<%= name %>">
 		<% end %>
-	</select>
+	</datalist><br>
 
 	<label>Category</label>
 	<input type = "text" name="category"><br>
@@ -20,9 +24,9 @@
 	<label>Payee</label>
 	<input type = "text" name="payee"><br>
 
-	<input type = "submit">
+	<button class = "button" type="submit">Add Entry</input>
 </form>
 
 <form action="/logout" method="post" >
-	<button type="submit">Log out</input>
+	<button class = "button" type="submit">Log out</input>
 </form>

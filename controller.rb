@@ -9,12 +9,14 @@ ar.set_up_initial_values
 ar.create_report
 
 get("/report") do
+	@account_names = ar.accounts.keys
 	if params["name"] == nil then @account_list = ar.accounts
 	else @account_list = ar.trim_to_one_account(params["name"]) end
 	erb :report
 end
 
 get("/") do
+	@account_names = ar.accounts.keys
 	erb :index
 end
 
@@ -24,6 +26,7 @@ post("/add_row") do
 end
 
 get("/admin") do
+	@account_names = ar.accounts.keys
 	if session[:loggedin] == true
 		@account_names = ar.accounts.keys
 		erb :admin
@@ -33,6 +36,7 @@ get("/admin") do
 end
 
 get("/login") do
+	@account_names = ar.accounts.keys
 	erb :login
 end
 

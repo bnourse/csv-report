@@ -46,6 +46,7 @@ a {
 .report-table {
     border-collapse: collapse;
     width: 100%;
+    margin-bottom: 50px;
 }
 
 .report-table td, .report-table th {
@@ -162,13 +163,13 @@ ul.nav_list {
 	margin-bottom: 0;
 }
 
-.login_button {
-	font-size: 15px;
+.button {
+	font-size: 14px;
 	font-family: 'Carrois Gothic SC', sans-serif;
 	position: relative;
 }
 
-.login_button:hover {
+.button:hover {
 	background-color: #CAEBF2;
 }
 
